@@ -1,0 +1,264 @@
+{% extends "layout.html" %}
+{% block css %}
+    <link href="static/buss/css/plugin.css" rel="stylesheet" type="text/css"/>
+    <link href="static/plugin/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"/>
+    <link href="static/css/dropify.min.css" rel="stylesheet" type="text/css"/>
+{% end %}
+
+
+{% block webinfo %}
+    <div class="container">
+        <div class="row" style="margin-bottom: 30px">
+            <div class="col-sm-12">
+                <div class="btn-group pull-right m-t-15">
+                    <button type="button" class="btn btn-tag dropdown-toggle waves-effect waves-light"
+                            data-toggle="modal" data-target="#con-close-modal">新增环境
+                    </button>
+                </div>
+                <div style="margin-top: 30px">
+                    <span style="font-weight: bold;color:white">可开启环境数:{{ count }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            {% for images in cursor %}
+                <div class="col-sm-12 col-md-6 col-lg-4">
+                    <div class="portlet">
+                        <div class="portlet-heading portlet-default">
+
+                            <div class="label font-13 btn-tag"
+                                 style="float:right;margin:5px 12px 0 0 ">{{ images['info'][:10] }}</div>
+
+                            {% if images['difficulty'] == 'simple' %}
+                                <div class="label font-13 tag-tip">简单</div>
+                            {% elif images['difficulty'] == 'medium' %}
+                                <div class="label font-13 tag-middle">中级</div>
+                            {% elif images['difficulty'] == 'advanced' %}
+                                <div class="label font-13 tag-danger">高级</div>
+                            {% end %}
+
+                            <a data-toggle="collapse" data-parent="#accordion1" href="#bg-primary{{ images['id'] }}">
+                                <h3 class="portlet-title">{{ images['name'] }}
+                                </h3>
+                            </a>
+
+
+                        </div>
+
+                        <div id="bg-primary{{ images['id'] }}" class="panel-collapse collapse" style="line-height: 2">
+                            <div class="portlet-body">
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-info-outline" style="padding-right: 20px;"></i>
+                                    <span>介绍: {{ images['info'] }}</span>
+                                </p>
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-local-offer" style="padding-right: 20px;"></i>
+                                    <span>标签: <a href="/search_images?q={{ images['tags'] }}" target="_blank">{{ images['tags'] }}</a></span>
+                                </p>
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-collection-text" style="padding-right: 20px;"></i>
+                                    <span>类型: <a href="/search_images?q={{ images['types'] }}" target="_blank">
+                                        {% if images['types'] == 'ctf' %}
+                                            {{ 'CTF练习' }}
+                                        {% else %}
+                                            {{ '漏洞复现' }}
+                                        {% end %}
+                                    </a></span>
+                                </p>
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-pin-account" style="padding-right: 20px;"></i>
+                                    <span>作者: <a href="/search_images?q={{ images['author'] }}" target="_blank">{{ images['author'] }}</a></span>
+                                </p>
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-calendar" style="padding-right: 20px;"></i>
+                                    <span>时间: {{ images['add_time'] }}</span>
+                                </p>
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-collection-text" style="padding-right: 20px;"></i>
+                                    <span>端口:
+                                        {% for port in images['json_images_port'] %}
+                                            {{ port['port'] }}/{{ port['protocol'] }};
+                                        {% end %}
+                                    </span>
+                                </p>
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-link" style="padding-right: 20px;"></i>
+                                    <span><a href="start_containers?images_id={{ images['images_id'] }}" >启动此环境</a></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% end %}
+        </div>
+        <div id="con-close-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true" style="display: none;">
+            {% module xsrf_form_html() %}
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">新增环境</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group no-margin">
+                                    <label for="up-type" class="control-label">上传格式</label>
+                                    <select class="form-control" id="up-type">
+                                        <option></option>
+                                        <option>json</option>
+                                        <option>file</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group no-margin">
+                                    <label for="env-isupload" class="control-label">是否共享该环境
+                                    <i class="zmdi zmdi-help-outline zmdi-hc-1x" title="如果选择共享，则将环境信息共享到github列表！"></i>
+                                    </label>
+                                    <select class="form-control" id="env-isupload">
+                                        <option value="true">是</option>
+                                        <option value="false">否</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row uploadjson" style="display: none;">
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="env-name" class="control-label">环境名称</label>
+                                    <input type="text" class="form-control" id="env-name" placeholder="环境的名称，不能重复。eg: Redis未授权漏洞">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group no-margin">
+                                    <label for="env-risk" class="control-label">难度等级</label>
+                                    <select class="form-control" id="env-risk">
+                                        <option value="simple">简单</option>
+                                        <option value="medium">中级</option>
+                                        <option value="advanced">高级</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group no-margin">
+                                    <label for="env-author" class="control-label">环境作者</label>
+                                    <input type="text" class="form-control" id="env-author" placeholder="环境的作者！eg: CleverBao">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group no-margin">
+                                    <label for="env-type" class="control-label">环境类型</label>
+                                    <select class="form-control" id="env-type">
+                                        <option value="debug">漏洞复现</option>
+                                        <option value="ctf">CTF练习</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="env-hub" class="control-label">系统密码</label>
+                                    <input type="text" class="form-control" id="env-syspass-json" placeholder="系统密码！">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="env-hub" class="control-label">环境镜像地址</label>
+                                    <input type="text" class="form-control" id="env-hub" placeholder="支持从Docker Hub拉取镜像。eg: apache:latest">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="env-tags" class="control-label">环境标签</label>
+                                    <input type="text" class="form-control" id="env-tags" placeholder="环境属于那种类型的漏洞。eg: strtus2, sql-bool">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group no-margin jsoninfo">
+                                    <label for="env-port" class="control-label">环境需开启端口</label>
+                                    <input type="text" class="form-control" id="env-port"
+                                           placeholder="端口+/+协议类型,用逗号分隔 eg: 80/tcp,23/udp">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group no-margin jsoninfo">
+                                    <label for="env-flag" class="control-label">flag</label>
+                                    <input type="text" class="form-control" id="env-flag"
+                                           placeholder="flag{...} 只有CTF类型的环境需要flag。">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group no-margin jsoninfo">
+                                    <label for="env-info" class="control-label">环境介绍</label>
+                                    <textarea class="form-control" rows="2" id="env-info"
+                                              placeholder="环境介绍"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row uploadfile" style="display: none">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="env-hub" class="control-label">系统密码</label>
+                                    <input type="text" class="form-control" id="env-syspass-file" placeholder="系统密码！">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group no-margin">
+                                    <label for="env-fileupload" class="control-label" data-max-file-size="1M">JSON文件上传</label>
+                                    <input type="file" class="dropify" id="env-fileupload" name="jsonfile"/>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal" id="close">关闭
+                        </button>
+                        <button type="button" class="btn btn-info waves-effect waves-light" id="add">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal -->
+        {% if count > 30 %}
+            <div class="row" style="position: absolute;top: 100%;left: 40%;right: 40%;margin: -80px 0 0 0;">
+                <ul class="pagination pagination-split">
+                    <li>
+                        <a href="javascript:prePage()"><i class="fa fa-angle-left"></i>前一页</a>
+                    </li>
+                    {% if count % 30 == 0 %}
+                        {% for i in range(1,(count//30) + 1) %}
+                            <li>
+                                <a href="javascript:turnTo({{ i }})">{{ i }}</a>
+                            </li>
+                        {% end %}
+                    {% else %}
+                        {% for i in range(1,(count//30) + 2) %}
+                            <li>
+                                <a href="javascript:turnTo({{ i }})">{{ i }}</a>
+                            </li>
+                        {% end %}
+                    {% end %}
+                    <li>
+                        <a href="javascript:nextPage()">后一页<i class="fa fa-angle-right"></i></a>
+                    </li>
+                </ul>
+            </div>
+        {% end %}
+    </div>
+{% end %}
+
+{% block js %}
+    <script src="static/plugin/sweetalert/sweetalert.min.js"></script>
+    <script src="static/js/dropify.min.js"></script>
+    <script src="static/js/ajaxfileupload.js"></script>
+    <script src="static/buss/js/plugin.js"></script>
+{% end %}

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "迅风扫描器",
+    "info": "巡风是一款适用于企业内网的漏洞快速应急，巡航扫描系统。",
+    "isupload": "true",
+    "types": "debug",
+    "tags": "扫描器",
+    "author": "同程",
+    "hub": "ysrc/xunfeng",
+    "flag": "",
+    "port": "80/tcp",
+    "risk": "simple"
+  }
+]

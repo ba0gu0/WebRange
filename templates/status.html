@@ -1,0 +1,366 @@
+{% extends "layout.html" %}
+
+{% block css %}
+    <link href="static/buss/css/plugin.css" rel="stylesheet" type="text/css"/>
+    <link href="static/plugin/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"/>
+    <link href="static/css/dropify.min.css" rel="stylesheet" type="text/css"/>
+    <link href="static/css/style_line.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="static/plugin/morris/morris.css">
+    <style>
+        .text-muted {
+            text-align: center;
+            font-size: 17px;
+            padding: 19px 0 19px 0
+        }
+
+        .text-muted span {
+            color: white;
+        }
+    </style>
+
+  <script src="static/js/Chart.js"></script>
+
+{% end %}
+
+
+{% block webinfo %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2 col-md-6">
+                <div  class="card-box widget-user">
+                    <div class="text-center">
+                        <h2 class="text-custom" data-plugin="counterup">{{ sysinfo['Io_max'] }}</h2>
+                        <h5>内存容量</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <div class="card-box widget-user">
+                    <div class="text-center">
+                        <h2 class="text-pink" data-plugin="counterup">{{ sysinfo['Disk_max'] }}</h2>
+                        <h5>磁盘容量</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6" >
+              <div class="card-box">
+                  <div class="widget-box-2" >
+                      <div id="cpu1" class="widget-detail-2" >
+                          <span class="badge badge-purple pull-left m-t-20">负载：{{ sysinfo['Cpu_use'] }}% <i class="zmdi zmdi-trending-up"></i> </span>
+                          <p class="text-muted">
+                          <span><i style="margin-left:10px;margin-right: 50px"></i></span>
+                          </p>
+                      </div>
+                      <div id="cpu2" class="progress progress-bar-purple-alt progress-sm m-b-0">
+                          <div class="progress-bar progress-bar-purple" role="progressbar"
+                               aria-valuenow="{{ sysinfo['Cpu_use'] }}" aria-valuemin="0" aria-valuemax="100"
+                               style="width: {{ sysinfo['Cpu_use'] }}%;">
+                              <span class="sr-only">{{ sysinfo['Cpu_use'] }}% Complete</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+
+            <div class="col-lg-2 col-md-6">
+                <div class="card-box widget-user">
+                    <div class="text-center">
+                        <h2 class="text-warning" data-plugin="counterup">{{ start_counts }}</h2>
+                        <h5>开启环境数</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <div class="card-box widget-user">
+                    <div class="text-center">
+                        <h2 class="text-info" data-plugin="counterup">{{ images_counts }}</h2>
+                        <h5>环境总数</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card-box">
+                    <h4 class="header-title m-t-0">内存使用情况<span id="io" style="position: absolute;right: 40px;">已使用：{{ sysinfo['Io_use'] }}</span>
+                    </h4>
+                    <div id="pie_ios">
+                        <div  class="widget-chart text-center">
+                            <canvas id="pie_io" height="235" width="235"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end col -->
+
+            <div class="col-lg-4">
+                <div class="card-box">
+                    <h4 class="header-title m-t-0">网络使用情况<span id="net" style="position: absolute;right: 40px;"><img src="static/images/up.png" alt="up" width="18" height="18">&nbsp;&nbsp;{{ sysinfo['Net_sent'] }}&nbsp;&nbsp;&nbsp;<img src="static/images/down.png" alt="down" width="18" height="18">&nbsp;&nbsp;{{ sysinfo['Net_recv'] }}</span>
+                    </h4>
+                    <div class="widget-chart text-center">
+                        <svg width="235" height="235" viewBox="0 0 235 110" version="1.1">
+                            <defs>
+                            <linearGradient x1="0%" y1="100%" x2="100%" y2="100%" id="linearGradient-1">
+                                <stop stop-color="#2090F8" offset="0%"></stop>
+                                <stop stop-color="#01FCE4" offset="41.7610013%"></stop>
+                                <stop stop-color="#0BFF8C" offset="78.6870217%"></stop>
+                                <stop stop-color="#51FF00" offset="100%"></stop>
+                            </linearGradient>
+                            </defs>
+                            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+                            <path d="M2.10546875,95.75 L40.5546875,68.3476562 L55.2109375,81.1796875 L65.2148437,76.3945312 L96.1835937,86.8320312 L131.023438,19.9414062 L142.15625,23.7226562 L183.605469,2.1953125 L211.007812,22.3320312 L234.320312,71.5664062 L234.667969,83.0039062 L244.019531,83.0039062 L247.105469,88.8320312 L312.695312,104.839844" id="Path-1" stroke="url(#linearGradient-1)" stroke-width="4" sketch:type="MSShapeGroup" class="path"></path>
+                            </g>
+                        </svg>
+                    </div>
+                    
+                </div>
+            </div><!-- end col -->
+
+            <div class="col-lg-4">
+                <div class="card-box">
+                    <h4 class="header-title m-t-0">磁盘使用情况<span id="disk" style="position: absolute;right: 40px;">已使用：{{ sysinfo['Disk_use'] }}</span>
+                    </h4>
+                    <div  id="pie_disks">
+                        <div class="widget-chart text-center">
+                            <canvas id="pie_disk" height="235" width="235"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end col -->
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row" style="margin-bottom: 30px">
+            <div class="col-sm-12">
+                <div style="margin-top: 30px">
+                    <span style="font-weight: bold;color:white">已开启环境数:{{ start_counts }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            {% for _ in cursor %}
+                <div class="col-sm-12 col-md-6 col-lg-4">
+                    <div class="portlet">
+                        <div class="portlet-heading portlet-default">
+
+                            <div class="label font-13 btn-tag"
+                                 style="float:right;margin:5px 12px 0 0 ">{{ _['images_info']['info'][0:10] }}</div>
+
+                            {% if _['images_info']['difficulty'] == 'simple' %}
+                                <div class="label font-13 tag-tip">简单</div>
+                            {% elif _['images_info']['difficulty'] == 'medium' %}
+                                <div class="label font-13 tag-middle">中级</div>
+                            {% elif _['images_info']['difficulty'] == 'advanced' %}
+                                <div class="label font-13 tag-danger">高级</div>
+                            {% end %}
+
+                            <a data-toggle="collapse" data-parent="#accordion1" href="#bg-primary{{ _['id'] }}">
+                                <h3 class="portlet-title">{{ _['images_info']['name'] }}
+                                </h3>
+                            </a>
+
+
+                        </div>
+
+                        <div id="bg-primary{{ _['id'] }}" class="panel-collapse collapse" style="line-height: 2">
+                            <div class="portlet-body">
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-info-outline" style="padding-right: 20px;"></i>
+                                    <span>介绍: {{ _['images_info']['info'] }}</span>
+                                </p>
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-local-offer" style="padding-right: 20px;"></i>
+                                    <span>标签: <a href="/search_images?q={{ _['images_info']['tags'] }}" target="_blank">{{ _['images_info']['tags'] }}</a></span>
+                                </p>
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-collection-text" style="padding-right: 20px;"></i>
+                                    <span>类型: <a href="/search_images?q={{ _['images_info']['types'] }}" target="_blank">
+                                        {% if _['images_info']['types'] == 'ctf' %}
+                                            {{ 'CTF练习' }}
+                                        {% elif _['images_info']['types'] == 'debug' %}
+                                            {{ '漏洞复现' }}
+                                        {% else %}
+                                            {{ '未知' }}
+                                        {% end %}
+                                    </a></span>
+                                </p>
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-pin-account" style="padding-right: 20px;"></i>
+                                    <span>作者: <a href="/search_images?q={{ _['images_info']['author'] }}" target="_blank">{{ _['images_info']['author'] }}</a></span>
+                                </p>
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-calendar" style="padding-right: 20px;"></i>
+                                    <span>时间: {{ _['start_time'] }}</span>
+                                </p>
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-link" style="padding-right: 20px;"></i>
+
+                                    {% if '80/tcp' in list(_['json_containers_port']) %}
+                                    <span>开启的端口：
+                                        <script type="text/javascript">
+                                                    document.write('<a href="http://' + location.hostname + ':{{ _['json_containers_port']['80/tcp'][0:-4] }}" target="_blank">{{ _['containers_port'] }}')
+                                        </script>
+                                    </span>
+                                    {% elif '8080/tcp' in list(_['json_containers_port']) %}
+                                    <span>开启的端口：
+                                        <script type="text/javascript">
+                                                    document.write('<a href="http://" + location.hostname + ":{{ _['json_containers_port']['8080/tcp'][0:-4] }}" target="_blank">{{ _['containers_port'] }}')
+                                        </script>
+                                    </span>
+
+                                    {% else %}
+                                        <span>开启的端口：{{ _['containers_port'] }}</span>
+                                    {% end %}
+                                </p>
+                                <p>
+                                    <i class="zmdi zmdi-hc-lg zmdi-link" style="padding-right: 20px;"></i>
+                                    <span><a href="stop_containers?containers_id={{ _['containers_id'] }}">关闭此环境</a></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% end %}
+        </div>
+    </div>
+
+    <!-- 生成饼图 -->
+    <script type="text/javascript">
+        var pieData_io = [
+            {
+              value: 10,
+              color: "#00FF00"
+            },
+            {
+              value: 10,
+              color: "#1CE300"
+            },
+            {
+              value: 10,
+              color: "#39C600"
+            },
+            {
+              value: 10,
+              color: "#55AA00"
+            },
+            {
+              value: 10,
+              color: "#718E00"
+            },
+            {
+              value: 10,
+              color: "#8E7100"
+            },
+            {
+              value: 10,
+              color: "#AA5500"
+            },
+            {
+              value: 10,
+              color: "#C63900"
+            },
+            {
+              value: 10,
+              color: "#E31C00"
+            },
+
+            {
+              value : 10,
+              color : "#FF0000"
+            }
+        ];
+
+        pieData_io.splice(parseInt({{ float(sysinfo['Io_ratio']) }}/10), 10 - parseInt({{ float(sysinfo['Io_ratio']) }}/10));
+        pieData_io[parseInt({{ float(sysinfo['Io_ratio']) }}/10)] = {value: 100 - parseInt({{ float(sysinfo['Io_ratio']) }}),color: "#FFFFFF"};
+        var myPie = new Chart(document.getElementById("pie_io").getContext("2d")).Pie(pieData_io);
+
+        var pieData_disk = [
+            {
+              value: 10,
+              color: "#3366FF"
+            },
+            {
+              value: 10,
+              color: "#4A5BE3"
+            },
+            {
+              value: 10,
+              color: "#604FC6"
+            },
+            {
+              value: 10,
+              color: "#7744AA"
+            },
+            {
+              value: 10,
+              color: "#8E398E"
+            },
+            {
+              value: 10,
+              color: "#A42D71"
+            },
+            {
+              value: 10,
+              color: "#BB2255"
+            },
+            {
+              value: 10,
+              color: "#D21739"
+            },
+            {
+              value: 10,
+              color: "#E80B1C"
+            },
+            {
+              value : 10,
+              color : "#FF0000"
+            }
+          ];
+
+        pieData_disk.splice(parseInt({{ float(sysinfo['Disk_ratio']) }}/10), 10 - parseInt({{ float(sysinfo['Disk_ratio']) }}/10));
+        pieData_disk[parseInt({{ float(sysinfo['Disk_ratio']) }}/10)] = {value: 100 - parseInt({{ float(sysinfo['Disk_ratio']) }}),color: "#FFFFFF"};
+
+        var myPie = new Chart(document.getElementById("pie_disk").getContext("2d")).Pie(pieData_disk);
+    </script>
+
+
+
+    <!-- websocket动态生成页面 -->
+    <script type="text/javascript">
+
+        var ws = new WebSocket("ws://" + location.host + "/websocket");
+
+        ws.onopen = function() {
+           ws.send("Hello, Web Range !");
+        };
+
+        ws.onmessage = function (evt) {
+            data = JSON.parse(evt.data);
+            innerdiv(data);
+        };
+
+        function innerdiv(data){
+            document.getElementById("cpu1").innerHTML=' <span class="badge badge-purple pull-left m-t-20">负载：' + data.Cpu_use + '<i class="zmdi zmdi-trending-up"></i> </span> <p class="text-muted"><span><i style="margin-left:10px;margin-right: 50px"></i></span></p>';
+
+            document.getElementById("cpu2").innerHTML='<div class="progress-bar progress-bar-purple" role="progressbar" aria-valuenow="' + data.Cpu_use + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + data.Cpu_use + '%;"> <span class="sr-only"> ' + data.Cpu_use + '% Complete</span> </div>';
+            document.getElementById("io").innerHTML='已使用：' + data.Io_use;
+            document.getElementById("net").innerHTML='<img src="static/images/up.png" alt="up" width="18" height="18">&nbsp;&nbsp;' + data.Net_sent + '&nbsp;&nbsp;&nbsp;<img src="static/images/down.png" alt="down" width="18" height="18">&nbsp;&nbsp;' + data.Net_recv
+            document.getElementById("disk").innerHTML='已使用：' + data.Disk_use;
+        }
+        
+    </script>
+{% end %}
+{% block js %}
+    <script src="static/plugin/sweetalert/sweetalert.min.js"></script>
+    <script src="static/js/dropify.min.js"></script>
+    <script src="static/js/ajaxfileupload.js"></script>
+    <script src="static/buss/js/plugin.js"></script>
+{% end %}
+
+
+

@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% block css %}
+
+<link rel="stylesheet" href="static/css/docker.css">
+
+<script type="text/javascript">
+    function countDown(sec,url){        
+        document.getElementById('jumpTo').innerHTML=sec;  
+        if(--sec>0){     
+            setTimeout("countDown("+sec+",'"+url+"')",1000);     
+        }     
+        else{     
+                {% if status == 'start' %}
+                    window.open(url);
+                {% elif status == 'close' %}
+                    location.href=url
+                {% end %}  
+        }     
+    }     
+
+</script>
+{% end %}
+{% block webinfo %}
+
+    <div class="ex-page-content text-center">
+        <br><br><br><br>
+        {% if status == 'start' %}
+            
+            {% if not port %}
+                <h3 class="text-uppercase font-600">开启镜像成功，由于未开启web服务，请返回状态栏目，查看此镜像开启的端口。</h3>
+            {% else %}
+                <h3 class="text-uppercase font-600">开启镜像成功，<span id="jumpTo">2</span>秒后打开新窗口。。。</h3>
+            {% end %}
+        {% elif status == 'close' %}
+            <h3 class="text-uppercase font-600">关闭镜像成功，<span id="jumpTo">2</span>秒后跳转。。。</h3>
+        {% end %}
+    </div>
+    <br><br>
+    <div class='loader'>
+      <div class='loader_overlay'></div>
+      <div class='loader_cogs'>
+        <div class='loader_cogs__top'>
+          <div class='top_part'></div>
+          <div class='top_part'></div>
+          <div class='top_part'></div>
+          <div class='top_hole'></div>
+        </div>
+        <div class='loader_cogs__left'>
+          <div class='left_part'></div>
+          <div class='left_part'></div>
+          <div class='left_part'></div>
+          <div class='left_hole'></div>
+        </div>
+        <div class='loader_cogs__bottom'>
+          <div class='bottom_part'></div>
+          <div class='bottom_part'></div>
+          <div class='bottom_part'></div>
+          <div class='bottom_hole'></div>
+        </div>
+      </div>
+    </div>
+
+
+    <script type="text/javascript">
+        {% if status == 'start' %}
+            countDown(2, 'http://' + location.hostname + ':' + {{ port }});
+        {% elif status == 'close' %}
+            countDown(2, '/status_info');
+        {% end %}
+        
+    </script>
+
+    <script type="text/javascript">
+        {% if error %}
+            alert('你发送的容器信息有误！');
+            location.href='/images_info'
+        {% end %}
+    </script>
+{% end %}
+
+{% block js %}
+
+{% end %}
