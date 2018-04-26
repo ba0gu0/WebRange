@@ -405,7 +405,7 @@ class AddImagesHandler(BaseHandler):
                     port = self.__re_port(_['port'])
                     risk = self.__re_risk(_['risk'])
 
-                    if _['name']: name = _['name'][:12]
+                    if _['name']: name = _['name']
 
                     images_name, images_tag = self.__re_hub(_['hub'])
                     if not images_name : continue
@@ -436,7 +436,7 @@ class AddImagesHandler(BaseHandler):
             port = self.__re_port(port)
             risk = self.__re_risk(risk)
 
-            if name: name = name[:12]
+            if name: name = name
 
             images_name, images_tag = self.__re_hub(hub)
             if not images_name :
@@ -457,7 +457,7 @@ class AddImagesHandler(BaseHandler):
             port = self.__re_port(port)
             risk = self.__re_risk(risk)
 
-            if name : name = name[:12]
+            if name : name = name
 
             images_name, images_tag = self.__re_hub(hub)
             if not images_name:
