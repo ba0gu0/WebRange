@@ -81,10 +81,14 @@ sudo apt install sqlite3 -y
 7、运行系统
 
 ``` sh
-python3 run.py
+# 注意8000端口要未被占用
+sudo python3 run.py
 ```
 
-8、使用supervisor开启守护进程(非必须)
+8、通过`8000`端口访问
+浏览器通过`ip:8000`端口访问,若非本机访问,可能需要配置防火墙
+
+9、使用supervisor开启守护进程(非必须)
 
 ``` sh
 vim ./supervisor.conf
@@ -95,7 +99,7 @@ cp ./supervisor.conf /etc/supervisor/conf.d/WebRange.conf
 sudo service supervisord restart
 ```
 
-9、由于程序使用了websocket进行数据传输，因此如果需要使用nginx进行反向代理，可以参考使用以下配置文件
+10、由于程序使用了websocket进行数据传输，因此如果需要使用nginx进行反向代理，可以参考使用以下配置文件
 
 ``` conf
 server {
