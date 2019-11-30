@@ -1,10 +1,10 @@
 # Web Range平台（Web漏洞、Ctf场景靶场）
 * 一个Web靶场平台，可以导入各种Docker漏洞场景和Ctf场景。可以用来部署在私人、公有网络中，以供练习使用。
-* 突然发现，写说明书才是最难的！！！
+* 突然发现，写说明文档很难啊！！！
 
 
 # 鸣谢
-* 先感谢伟大的开源社区，让这个小网站可以顺利完成。
+* 先感谢伟大的开源社区，让这个小项目可以顺利完成。
 
 * 使用web框架[tornado](http://www.tornadoweb.org/en/stable/)（感谢），web页面使用[xunfeng](https://github.com/ysrc/xunfeng)前端界面（感谢ysrc，已征得同意使用），后端使用[docker](https://github.com/docker/docker-py)模块作为核心（感谢），感谢[docker](https://docker.com)虚拟化平台，感谢所有在项目中用到的优秀模块，感谢在网络中分享优秀代码的大佬。
 
@@ -19,38 +19,38 @@
 > Docker版本：18.03.0-ce-mac60 (23751)（2017年之后的版本）
 >
 > 数据库：sqlite3
->
->默认账户密码：admin/123456
+
+**默认账户密码：admin/123456**
 
 
 # 环境配置
 
-1、安装ubuntu系统16.04
+## 1. 安装ubuntu系统
 
-2、clone项目
+## 2. clone项目
 
 ```sh 
 git clone https://github.com/cleverbao/WebRange.git
 ```
 
-3、安装python3.6
+## 3. 安装python3.6
 
 ``` sh 
 sudo apt install python3 python3-dev python3-pip   -y
 ```
 
-4、安装依赖库
+## 4. 安装依赖库
 
 ``` sh
 cd web_range
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
-5、安装最新版本的docker
+## 5. 安装最新版本的docker
 
 ``` sh
-#! 安装步骤只适合Ubuntu16.04版本
-#! 如果是其他版本参考https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/
+# 安装步骤只适合Ubuntu16.04+
+# 如果是其他版本参考：https://docs.docker.com/install/linux/docker-ce/ubuntu/
 sudo apt-get remove docker docker-engine docker.io
 sudo apt-get update
 sudo apt-get install \
@@ -66,36 +66,41 @@ sudo add-apt-repository \
    stable"
 sudo apt-get update
 sudo apt-get install docker-ce
-#! 如果使用非root用户运行docker，需要运行一下命令：
+# 如果使用非root用户运行docker，需要运行一下命令：
 sudo groupadd docker
 sudo gpasswd -a ${USER} docker
 sudo service docker restart
 ```
 
-6、安装sqlit3
+## 6. 安装sqlit3
 
 ``` sh
 sudo apt install sqlite3 -y 
 ```
 
-7、运行系统
+## 7. 运行系统
 
 ``` sh
-python3 run.py
+# 注意 8000 端口要未被占用
+sudo python3 run.py
 ```
 
-8、使用supervisor开启守护进程(非必须)
+## 8. 通过 `8000` 端口访问
+
+在浏览器通过 `IP:8000` 访问，若非本机访问注意防火墙
+
+## 9. 使用supervisor开启守护进程(非必须)
 
 ``` sh
 vim ./supervisor.conf
-#! 修改配置项
-#! 将‘directory = /root/WebRange’中’=‘后面的内容改为项目所在目录
-#! 将‘user = root’中‘=’后面的内容，改为用来启动程序的用户
+# 修改配置项
+# 将‘directory = /root/WebRange’中’=‘后面的内容改为项目所在目录
+# 将‘user = root’中‘=’后面的内容，改为用来启动程序的用户
 cp ./supervisor.conf /etc/supervisor/conf.d/WebRange.conf
 sudo service supervisord restart
 ```
 
-9、由于程序使用了websocket进行数据传输，因此如果需要使用nginx进行反向代理，可以参考使用以下配置文件
+## 10. 由于程序使用了websocket进行数据传输，因此如果需要使用nginx进行反向代理，可以参考使用以下配置文件
 
 ``` conf
 server {
@@ -127,7 +132,7 @@ server {
 
 
 
-## 主要功能
+# 主要功能
 
 * 提供Web界面，通过登陆用户，打开实验场景进行练习。
 
@@ -160,16 +165,12 @@ server {
 
 * 在设置页面可以修改当前用户密码。
 
-> 通过超级密码可以添加用户，添加场景，没有超级密码任何账户都没有权限操作。
->
+**通过超级密码可以添加用户，添加场景，没有超级密码任何账户都没有权限操作。**
 
 
 
 
-
-
-# 操作视频
-
+# 操作动画
 
 
 ![使用方法](github_images/web_range平台使用.gif)
@@ -178,4 +179,4 @@ server {
 
 # 附加说明
 
-> 本项目禁止作用于商业用途。
+**本项目未经授权禁止作用于商业用途**
