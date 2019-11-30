@@ -1,10 +1,10 @@
 # Web Range平台（Web漏洞、Ctf场景靶场）
 * 一个Web靶场平台，可以导入各种Docker漏洞场景和Ctf场景。可以用来部署在私人、公有网络中，以供练习使用。
-* 突然发现，写说明书才是最难的！！！
+* 突然发现，写说明文档很难啊！！！
 
 
 # 鸣谢
-* 先感谢伟大的开源社区，让这个小网站可以顺利完成。
+* 先感谢伟大的开源社区，让这个小项目可以顺利完成。
 
 * 使用web框架[tornado](http://www.tornadoweb.org/en/stable/)（感谢），web页面使用[xunfeng](https://github.com/ysrc/xunfeng)前端界面（感谢ysrc，已征得同意使用），后端使用[docker](https://github.com/docker/docker-py)模块作为核心（感谢），感谢[docker](https://docker.com)虚拟化平台，感谢所有在项目中用到的优秀模块，感谢在网络中分享优秀代码的大佬。
 
@@ -25,7 +25,7 @@
 
 # 环境配置
 
-## 1. 安装ubuntu系统16.04
+## 1. 安装ubuntu系统
 
 ## 2. clone项目
 
@@ -49,8 +49,8 @@ pip3 install -r requirements.txt
 ## 5. 安装最新版本的docker
 
 ``` sh
-#! 安装步骤只适合Ubuntu16.04版本
-#! 如果是其他版本参考https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/
+# 安装步骤只适合Ubuntu16.04+
+# 如果是其他版本参考：https://docs.docker.com/install/linux/docker-ce/ubuntu/
 sudo apt-get remove docker docker-engine docker.io
 sudo apt-get update
 sudo apt-get install \
@@ -66,7 +66,7 @@ sudo add-apt-repository \
    stable"
 sudo apt-get update
 sudo apt-get install docker-ce
-#! 如果使用非root用户运行docker，需要运行一下命令：
+# 如果使用非root用户运行docker，需要运行一下命令：
 sudo groupadd docker
 sudo gpasswd -a ${USER} docker
 sudo service docker restart
@@ -93,9 +93,9 @@ sudo python3 run.py
 
 ``` sh
 vim ./supervisor.conf
-#! 修改配置项
-#! 将‘directory = /root/WebRange’中’=‘后面的内容改为项目所在目录
-#! 将‘user = root’中‘=’后面的内容，改为用来启动程序的用户
+# 修改配置项
+# 将‘directory = /root/WebRange’中’=‘后面的内容改为项目所在目录
+# 将‘user = root’中‘=’后面的内容，改为用来启动程序的用户
 cp ./supervisor.conf /etc/supervisor/conf.d/WebRange.conf
 sudo service supervisord restart
 ```
